@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-namespace CRUD_TEST.Models.Models
+﻿namespace CRUD_TEST.Models.Models
 {
     public class User_Profile
     {
-
-        [Key]
-        public decimal idUser { get; set; }
-        [Key]
-        public decimal idProfile { get; set; }
+        public int idUser { get; set; }
+        public int idProfile { get; set; }
     }
 }

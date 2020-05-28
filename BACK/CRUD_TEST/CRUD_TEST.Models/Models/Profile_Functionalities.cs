@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace CRUD_TEST.Models.Models
 {
     public class Profile_Functionalities
     {
-        [Key]
-        public decimal idProfile { get; set; }
-        [Key]
-        public decimal idFunctionalities { get; set; }
+        public int idProfile { get; set; }
+        public int idFunctionalities { get; set; }
     }
 }
