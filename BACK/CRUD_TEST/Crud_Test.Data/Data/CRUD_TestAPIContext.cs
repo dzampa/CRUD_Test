@@ -11,18 +11,31 @@ namespace Crud_Test.Data.Data
         }
 
         public DbSet<Functionalities> Functionalities { get; set; }
-        public DbSet<Profile> Profiles { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<User_Profile> User_Profiles { get; set; }
+        public DbSet<Profile> Profile { get; set; }
+        public DbSet<User> User { get; set; }
+        public DbSet<User_Profile> User_Profile { get; set; }
         public DbSet<Profile_Functionalities> Profile_Functionalities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Functionalities>().HasKey(e => new { e.idFunctionalities });
-            modelBuilder.Entity<Profile>().HasKey(e => new { e.idProfile });
-            modelBuilder.Entity<User>().HasKey(e => new { e.idUser });
-            modelBuilder.Entity<User_Profile>().HasKey(e => new { e.idUser, e.idProfile });
-            modelBuilder.Entity<Profile_Functionalities>().HasKey(e => new { e.idProfile, e.idFunctionalities });
+            modelBuilder.Entity<Functionalities>(b=> {
+                b.HasKey(e => e.idFunctionalities);
+                b.Property(e => e.idFunctionalities).ValueGeneratedOnAdd();
+            });
+            modelBuilder.Entity<Profile>(b=> { 
+                b.HasKey(e => new { e.idProfile });
+                b.Property(e => e.idProfile).ValueGeneratedOnAdd();
+            });
+            modelBuilder.Entity<User>(b => {
+                b.HasKey(e => new { e.idUser });
+                b.Property(e => e.idUser).ValueGeneratedOnAdd();                
+            });
+            modelBuilder.Entity<User_Profile>(b => {
+                b.HasKey(e => new { e.idUser, e.idProfile });
+            });
+            modelBuilder.Entity<Profile_Functionalities>(b => {
+                b.HasKey(e => new { e.idFunctionalities, e.idProfile });
+            });
         }
     }
 }

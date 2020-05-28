@@ -29,10 +29,24 @@ namespace CRUD_Test.API.Controllers
         }
 
         // GET: api/Profile_Functionalities/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Profile_Functionalities>> GetProfile_Functionalities(int id)
+        [HttpGet("{idFunctionalities}")]
+        public async Task<ActionResult<IEnumerable<Profile_Functionalities>>> GetProfile_Functionalities(int idFunctionalities)
         {
-            var profile_Functionalities = await _context.Profile_Functionalities.FindAsync(id);
+            var profile_Functionalities = await _context.Profile_Functionalities.Where(e => e.idFunctionalities == idFunctionalities).ToListAsync();
+
+            if (profile_Functionalities == null)
+            {
+                return NotFound();
+            }
+
+            return profile_Functionalities;
+        }
+
+        // GET: api/Profile_Functionalities/byidprofile/5
+        [HttpGet("byidprofile/{idProfile}")]
+        public async Task<ActionResult<IEnumerable<Profile_Functionalities>>> GetProfile_FunctionalitiesProfile(int idProfile)
+        {
+            var profile_Functionalities = await _context.Profile_Functionalities.Where(e => e.idProfile == idProfile).ToListAsync();
 
             if (profile_Functionalities == null)
             {
@@ -45,10 +59,10 @@ namespace CRUD_Test.API.Controllers
         // PUT: api/Profile_Functionalities/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProfile_Functionalities(int id, Profile_Functionalities profile_Functionalities)
+        [HttpPut("{idProfile}")]
+        public async Task<IActionResult> PutProfile_Functionalities(int idProfile, Profile_Functionalities profile_Functionalities)
         {
-            if (id != profile_Functionalities.idProfile)
+            if (idProfile != profile_Functionalities.idProfile)
             {
                 return BadRequest();
             }
@@ -61,7 +75,7 @@ namespace CRUD_Test.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!Profile_FunctionalitiesExists(id))
+                if (!Profile_FunctionalitiesExists(idProfile))
                 {
                     return NotFound();
                 }
@@ -101,10 +115,10 @@ namespace CRUD_Test.API.Controllers
         }
 
         // DELETE: api/Profile_Functionalities/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Profile_Functionalities>> DeleteProfile_Functionalities(int id)
+        [HttpDelete("{idFunctionalities}")]
+        public async Task<ActionResult<Profile_Functionalities>> DeleteProfile_Functionalities(int idFunctionalities)
         {
-            var profile_Functionalities = await _context.Profile_Functionalities.FindAsync(id);
+            var profile_Functionalities = await _context.Profile_Functionalities.Where(e => e.idFunctionalities == idFunctionalities).FirstOrDefaultAsync();
             if (profile_Functionalities == null)
             {
                 return NotFound();
@@ -116,6 +130,21 @@ namespace CRUD_Test.API.Controllers
             return profile_Functionalities;
         }
 
+        // DELETE: api/Profile_Functionalities/byidprofile/5
+        [HttpDelete("bytype/{idProfile}")]
+        public async Task<ActionResult<IEnumerable<Profile_Functionalities>>> DeleteProfile_FunctionalitiesProfile(int idProfile)
+        {
+            var profile_Functionalities = await _context.Profile_Functionalities.Where(e => e.idProfile == idProfile).ToListAsync();
+            if (profile_Functionalities == null)
+            {
+                return NotFound();
+            }
+
+            _context.Profile_Functionalities.RemoveRange(profile_Functionalities);
+            await _context.SaveChangesAsync();
+
+            return profile_Functionalities;
+        }
         private bool Profile_FunctionalitiesExists(int id)
         {
             return _context.Profile_Functionalities.Any(e => e.idProfile == id);

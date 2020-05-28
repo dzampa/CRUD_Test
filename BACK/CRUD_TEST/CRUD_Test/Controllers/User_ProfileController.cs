@@ -25,14 +25,28 @@ namespace CRUD_Test.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User_Profile>>> GetUser_Profiles()
         {
-            return await _context.User_Profiles.ToListAsync();
+            return await _context.User_Profile.ToListAsync();
         }
 
         // GET: api/User_Profile/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User_Profile>> GetUser_Profile(int id)
+        [HttpGet("{idProfile}")]
+        public async Task<ActionResult<IEnumerable<User_Profile>>> GetUser_Profile(int idProfile)
         {
-            var user_Profile = await _context.User_Profiles.FindAsync(id);
+            var user_Profile = await _context.User_Profile.Where(e => e.idProfile == idProfile).ToListAsync();
+
+            if (user_Profile == null)
+            {
+                return NotFound();
+            }
+
+            return user_Profile;
+        }
+
+        // GET: api/User_Profile/byuserid/5
+        [HttpGet("byuserid/{idUser}")]
+        public async Task<ActionResult<IEnumerable<User_Profile>>> GetUser_ProfileUser(int idUser)
+        {
+            var user_Profile = await _context.User_Profile.Where(e => e.idUser == idUser).ToListAsync();
 
             if (user_Profile == null)
             {
@@ -45,10 +59,10 @@ namespace CRUD_Test.API.Controllers
         // PUT: api/User_Profile/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser_Profile(int id, User_Profile user_Profile)
+        [HttpPut("{idUser}")]
+        public async Task<IActionResult> PutUser_Profile(int idUser, User_Profile user_Profile)
         {
-            if (id != user_Profile.idUser)
+            if (idUser != user_Profile.idUser)
             {
                 return BadRequest();
             }
@@ -61,7 +75,7 @@ namespace CRUD_Test.API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!User_ProfileExists(id))
+                if (!User_ProfileExists(idUser))
                 {
                     return NotFound();
                 }
@@ -80,7 +94,7 @@ namespace CRUD_Test.API.Controllers
         [HttpPost]
         public async Task<ActionResult<User_Profile>> PostUser_Profile(User_Profile user_Profile)
         {
-            _context.User_Profiles.Add(user_Profile);
+            _context.User_Profile.Add(user_Profile);
             try
             {
                 await _context.SaveChangesAsync();
@@ -101,16 +115,31 @@ namespace CRUD_Test.API.Controllers
         }
 
         // DELETE: api/User_Profile/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<User_Profile>> DeleteUser_Profile(int id)
+        [HttpDelete("{idProfile}")]
+        public async Task<ActionResult<User_Profile>> DeleteUser_Profile(int idProfile)
         {
-            var user_Profile = await _context.User_Profiles.FindAsync(id);
+            var user_Profile = await _context.User_Profile.Where(e => e.idProfile == idProfile).FirstOrDefaultAsync();
             if (user_Profile == null)
             {
                 return NotFound();
             }
 
-            _context.User_Profiles.Remove(user_Profile);
+            _context.User_Profile.Remove(user_Profile);
+            await _context.SaveChangesAsync();
+
+            return user_Profile;
+        }
+        // DELETE: api/User_Profile/byuserid/5
+        [HttpDelete("byuserid/{idUser}")]
+        public async Task<ActionResult<User_Profile>> DeleteUser_ProfileUser(int idUser)
+        {
+            var user_Profile = await _context.User_Profile.Where(e => e.idUser == idUser).FirstOrDefaultAsync();
+            if (user_Profile == null)
+            {
+                return NotFound();
+            }
+
+            _context.User_Profile.Remove(user_Profile);
             await _context.SaveChangesAsync();
 
             return user_Profile;
@@ -118,7 +147,7 @@ namespace CRUD_Test.API.Controllers
 
         private bool User_ProfileExists(int id)
         {
-            return _context.User_Profiles.Any(e => e.idUser == id);
+            return _context.User_Profile.Any(e => e.idUser == id);
         }
     }
 }

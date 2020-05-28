@@ -25,14 +25,42 @@ namespace CRUD_Test.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.User.ToListAsync();
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.User.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        // GET: api/Users/bycpf/12345679812
+        [HttpGet("bycpf/{cpf}")]
+        public async Task<ActionResult<User>> GetUserCPF(int cpf)
+        {
+            var user = await _context.User.Where(e=> e.CPF == cpf).FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
+        // GET: api/Users/byname/teste
+        [HttpGet("byname/{name}")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUserName(string name)
+        {
+            var user = await _context.User.Where(e => e.Name.Contains(name)).ToListAsync();
 
             if (user == null)
             {
@@ -80,7 +108,12 @@ namespace CRUD_Test.API.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
+            if (UserExistCPF(user.CPF))
+            {
+                return BadRequest("This CPF as been registered!");
+            }
+
+            _context.User.Add(user);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUser", new { id = user.idUser }, user);
@@ -90,13 +123,20 @@ namespace CRUD_Test.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.User.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
+            var result = new User_ProfileController(_context).DeleteUser_ProfileUser(id).Result;
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            _context.User.Remove(user);
             await _context.SaveChangesAsync();
 
             return user;
@@ -104,7 +144,12 @@ namespace CRUD_Test.API.Controllers
 
         private bool UserExists(int id)
         {
-            return _context.Users.Any(e => e.idUser == id);
+            return _context.User.Any(e => e.idUser == id);
+        }
+
+        private bool UserExistCPF(decimal CPF)
+        {
+            return _context.User.Any(e => e.CPF == CPF);
         }
     }
 }

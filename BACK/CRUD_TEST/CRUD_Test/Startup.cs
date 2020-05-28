@@ -93,11 +93,6 @@ namespace CRUP_Test
 
             app.UseAuthorization();
 
-            app.Run(context => {
-                context.Response.Redirect("swagger");
-                return Task.CompletedTask;
-            });
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -25,14 +25,28 @@ namespace CRUD_Test.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Profile>>> GetProfiles()
         {
-            return await _context.Profiles.ToListAsync();
+            return await _context.Profile.ToListAsync();
         }
 
         // GET: api/Profiles/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Profile>> GetProfile(int id)
         {
-            var profile = await _context.Profiles.FindAsync(id);
+            var profile = await _context.Profile.FindAsync(id);
+
+            if (profile == null)
+            {
+                return NotFound();
+            }
+
+            return profile;
+        }
+
+        // GET: api/Profiles/bytype/teste
+        [HttpGet("bytype/{type}")]
+        public async Task<ActionResult<IEnumerable<Profile>>> GetProfile(string type)
+        {
+            var profile = await _context.Profile.Where(e => e.Type.Contains(type)).ToListAsync();
 
             if (profile == null)
             {
@@ -80,7 +94,7 @@ namespace CRUD_Test.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Profile>> PostProfile(Profile profile)
         {
-            _context.Profiles.Add(profile);
+            _context.Profile.Add(profile);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetProfile", new { id = profile.idProfile }, profile);
@@ -90,13 +104,19 @@ namespace CRUD_Test.API.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Profile>> DeleteProfile(int id)
         {
-            var profile = await _context.Profiles.FindAsync(id);
+            var profile = await _context.Profile.FindAsync(id);
             if (profile == null)
             {
                 return NotFound();
             }
 
-            _context.Profiles.Remove(profile);
+            var result = new Profile_FunctionalitiesController(_context).DeleteProfile_FunctionalitiesProfile(id).Result;
+            if(result == null)
+            {
+                return NotFound();
+            }
+
+            _context.Profile.Remove(profile);
             await _context.SaveChangesAsync();
 
             return profile;
@@ -104,7 +124,7 @@ namespace CRUD_Test.API.Controllers
 
         private bool ProfileExists(int id)
         {
-            return _context.Profiles.Any(e => e.idProfile == id);
+            return _context.Profile.Any(e => e.idProfile == id);
         }
     }
 }

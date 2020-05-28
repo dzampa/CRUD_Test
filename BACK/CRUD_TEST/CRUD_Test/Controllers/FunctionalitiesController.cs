@@ -42,6 +42,20 @@ namespace CRUD_Test.API.Controllers
             return functionalities;
         }
 
+        // GET: api/Functionalities/bytype/test
+        [HttpGet("bytype/{type}")]
+        public async Task<ActionResult<IEnumerable<Functionalities>>> GetFunctionalitiesByType(string type)
+        {
+            var functionalities = await _context.Functionalities.Where(e => e.Type.Contains(type)).ToListAsync();
+
+            if (functionalities == null)
+            {
+                return NotFound();
+            }
+
+            return functionalities;
+        }
+
         // PUT: api/Functionalities/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -92,6 +106,12 @@ namespace CRUD_Test.API.Controllers
         {
             var functionalities = await _context.Functionalities.FindAsync(id);
             if (functionalities == null)
+            {
+                return NotFound();
+            }
+
+            var result = new Profile_FunctionalitiesController(_context).DeleteProfile_Functionalities(id).Result; 
+            if (result == null)
             {
                 return NotFound();
             }
