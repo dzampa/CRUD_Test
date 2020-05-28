@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace CRUP_Test
 {
@@ -72,7 +73,7 @@ namespace CRUP_Test
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Stock History_API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CRUD_TEST_API");
             });
 
             if (env.IsDevelopment())
@@ -91,6 +92,11 @@ namespace CRUP_Test
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.Run(context => {
+                context.Response.Redirect("swagger");
+                return Task.CompletedTask;
+            });
 
             app.UseEndpoints(endpoints =>
             {

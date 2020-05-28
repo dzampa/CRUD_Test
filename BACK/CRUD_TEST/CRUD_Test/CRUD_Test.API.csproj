@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <DocumentationFile>C:\Users\Diego\source\repos\CRUP_Test\CRUP_Test\CRUP_Test.API.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\Diego\source\repos\CRUP_Test\BACK\CRUD_TEST\CRUD_Test\CRUD_Test.API.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath></OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
