@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {FiTrash2} from 'react-icons/fi';
-import {useHistory} from 'react-router-dom';
+import {FiTrash2,FiEdit2} from 'react-icons/fi';
 
 import api from '../../services/api';
 import Menu from '../Menu/Menu';
@@ -10,12 +9,13 @@ export default function User(){
 
     const [users, setUsers] = useState([]);
     const [profiles, setProfiles] = useState([]);
-
+    
+    const [idUser, setidUser] = useState(0); 
     const [Name, setName] = useState('');
     const [CPF, setCpf] = useState('');
-    const [idProfile, setidProfile] = useState('');    
-    
-    const history = useHistory();
+    const [idProfile, setidProfile] = useState(0); 
+    const [type, setType] = useState(''); 
+    const cpf = require('node-cpf');        
 
     useEffect(()=>{
         api.get('User_Profile/userprofile').then(response => {
@@ -31,31 +31,105 @@ export default function User(){
 
     async function handleRegister(e){
         e.preventDefault();
+
+        if(Name === '' || CPF === '' || idProfile === 0)
+        {
+            alert(`Name CPF and Profile is required!`)
+            return;
+        }
+
+        if(Name.length < 6 || Name.length > 100){
+            alert(`The name must be more than 6 and less than 100 characters long`)
+            return;
+        }
+
+        if(CPF.length !== 11){            
+            alert(`The CPF is invalid!`)
+            return;
+        }
+
+        if(!cpf.validate(CPF)){            
+            alert(`The CPF is invalid!`)
+            return;
+        }
+        
         const User = ({
             'Name': Name,
             'CPF': parseInt(CPF)
         })      
                 
         try{
-            const response = await api.post('Users',User);
 
-            const data2 = {   
-                'idUser': parseInt(response.data.idUser),         
-                'idProfile': parseInt(idProfile)
-            };
+            if (idUser === 0)
+            {
+                const response = await api.post('Users',User);
 
-           await api.post('User_Profile',data2);
-    
-            alert(`ID de usuário:: ${response.data.idUser}`)
+                const data2 = {   
+                    'idUser': parseInt(response.data.idUser),         
+                    'idProfile': parseInt(idProfile)
+                };
+
+                await api.post('User_Profile',data2);
+        
+                alert(`ID de usuário:: ${response.data.idUser}`);
+
+            }
+            else if (idUser !== 0)
+            {
+                await api.delete(`/User_Profile/byuserid/${idUser}`);
+
+                const User = ({
+                    'idUser': parseInt(idUser),
+                    'Name': Name,
+                    'CPF': parseInt(CPF)
+                })   
+
+                const response = await api.put(`/Users/${idUser}`,User)
+
+                const data2 = {   
+                    'idUser': parseInt(idUser),         
+                    'idProfile': parseInt(idProfile)
+                };
+
+                await api.post('User_Profile',data2);
+        
+                alert(`ID de usuário:: ${idUser}`)
+                                
+            }
 
             api.get('User_Profile/userprofile').then(response => {
                 setUsers(response.data);
             });
 
+            api.get('Profiles').then(response => {
+                setProfiles(response.data);
+            });
+
+            setidUser(0)
+            setName('');
+            setCpf('');
+            setidProfile(0);
+            setType('');
+
+        }catch (err){
+            alert('Erro no cadastro, tente novemente.' + err);
+        }        
+    }
+
+    async function handleUpdateUser(idUser,name,cpf,type){
+        try{
+            setName(name);
+            setCpf(cpf);
+            setType(type);
+            setidUser(idUser);
+
+            api.get(`Profiles/bytype/${type}`).then(response => {
+                setidProfile(response.data.idProfile);
+            });
+            
         }catch (err){
             alert('Erro no cadastro, tente novemente.' + err);
         }
-        
     }
 
     async function handleDeleteUser(id){
@@ -98,7 +172,7 @@ export default function User(){
                     <div class="row">
                         <div class="input-field col s6">
                             <select class="browser-default" value={idProfile} onChange={e => setidProfile(e.target.value)}>
-                                <option value="" >Choose the profile</option>
+                                <option value="0" >Choose the profile</option>
                                 {profiles.map(profile =>(
                                     <option 
                                         value={profile.idProfile} >
@@ -125,6 +199,9 @@ export default function User(){
                         
                         <button onClick={() => handleDeleteUser(user.idUser)} type="button">
                             <FiTrash2 size={20} color="#a8a8b3"/>
+                        </button>
+                        <button onClick={() => handleUpdateUser(user.idUser,user.name,user.cpf,user.type)} type="button">
+                            <FiEdit2 size={20} color="#a8a8b3"/>
                         </button>
                     </li>
                 ))}

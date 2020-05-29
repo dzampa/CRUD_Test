@@ -163,7 +163,7 @@ namespace CRUD_Test.API.Controllers
             var user_Profile = await _context.User_Profile.Where(e => e.idUser == idUser).FirstOrDefaultAsync();
             if (user_Profile == null)
             {
-                return NotFound();
+                return Ok();
             }
 
             _context.User_Profile.Remove(user_Profile);

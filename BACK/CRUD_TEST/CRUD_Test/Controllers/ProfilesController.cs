@@ -44,9 +44,9 @@ namespace CRUD_Test.API.Controllers
 
         // GET: api/Profiles/bytype/teste
         [HttpGet("bytype/{type}")]
-        public async Task<ActionResult<IEnumerable<Profile>>> GetProfile(string type)
+        public async Task<ActionResult<Profile>> GetProfile(string type)
         {
-            var profile = await _context.Profile.Where(e => e.Type.Contains(type)).ToListAsync();
+            var profile = await _context.Profile.Where(e => e.Type == type).FirstOrDefaultAsync();
 
             if (profile == null)
             {

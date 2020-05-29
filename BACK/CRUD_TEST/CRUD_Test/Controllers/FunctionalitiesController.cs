@@ -94,6 +94,11 @@ namespace CRUD_Test.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Functionalities>> PostFunctionalities(Functionalities functionalities)
         {
+            if (FunctionalitiesExistType(functionalities.Type))
+            {
+                return BadRequest("This Type as been registered!");
+            }
+
             _context.Functionalities.Add(functionalities);
             await _context.SaveChangesAsync();
 
@@ -125,6 +130,11 @@ namespace CRUD_Test.API.Controllers
         private bool FunctionalitiesExists(int id)
         {
             return _context.Functionalities.Any(e => e.idFunctionalities == id);
+        }
+
+        private bool FunctionalitiesExistType(string type)
+        {
+            return _context.Functionalities.Any(e => e.Type == type);
         }
     }
 }
