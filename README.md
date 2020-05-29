@@ -63,7 +63,7 @@ Caso desejar pode ser feita a publicação entro de uma pasta e a mesma ser conf
 Códigos fontes localizados em: https://github.com/dzampa/CRUD_Test/tree/master/frontend/crud_test
 Para inicializar o front-end é necessário ter instalado o Node e baixado os pacotes do React
 Apos isso abra a pasta do projeto (no meu caso eu utilizo o Visual Studio Code) e execulte o comando abaixo no terminal para baixar todas as suas dependências 
-
+```sh
 npm install 
 ```
 Assim que terminar as instalações execute o comando abaixo para iniciar a aplicação e poder visualisar no seu navegador
