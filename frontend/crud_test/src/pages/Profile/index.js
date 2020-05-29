@@ -8,6 +8,7 @@ import './styles.css';
 export default function Profile(){
 
     const [profiles, setProfiles] = useState([]);
+    const [functionalities, setFunctionalities] = useState([]);
 
     const [type, setType] = useState('');     
 
@@ -17,9 +18,15 @@ export default function Profile(){
         });
     },[]);
 
-    async function handleDeleteFunctionalities(id){
+    useEffect(()=>{
+        api.get('Functionalities').then(response => {
+            setFunctionalities(response.data);
+        });
+    },[]);
+
+    async function handleDeleteProfile(id){
         try {
-            await api.delete(`Functionalities/${id}`);
+            await api.delete(`Profiles/${id}`);
 
             setProfiles(profiles.filter(profile => profile.idProfile !== id))
         } catch (error) {
@@ -38,30 +45,14 @@ export default function Profile(){
                             <label for="profile">Profile</label>
                         </div>  
                         <div class="input-field col s3">
-                            <p>
-                                <label>
-                                    <input type="checkbox" class="filled-in"/>
-                                    <span>Filled in</span>
-                                </label>
-                            </p>
-                            <p>
-                                <label>
-                                    <input type="checkbox" class="filled-in"/>
-                                    <span>Filled in</span>
-                                </label>
-                            </p>
-                            <p>
-                                <label>
-                                    <input type="checkbox" class="filled-in"/>
-                                    <span>Filled in</span>
-                                </label>
-                            </p>
-                            <p>
-                                <label>
-                                    <input type="checkbox" class="filled-in"/>
-                                    <span>Filled in</span>
-                                </label>
-                            </p>
+                            {functionalities.map(functionalitie => (
+                                <p>
+                                    <label>
+                                        <input type="checkbox" class="filled-in" key={functionalitie.idFunctionalities}/>
+                                        <span>{functionalitie.type}</span>
+                                    </label>
+                                </p>                           
+                            ))}                            
                         </div>  
                         <div class="input-field col s3">
                             <a class="waves-effect waves-light btn">Save</a> 
@@ -70,20 +61,22 @@ export default function Profile(){
                 </form>              
             </div>      
             <ul class="collection">
-                {profiles.map(profile => (
-                    <li class="collection-item" key={profile.idProfile}>
+                {profiles.map(({idProfile, functionalities, type}) => (
+                    <li class="collection-item" key={idProfile}>
                         <strong>Type:</strong>
-                        <p>{profile.type}</p>
-                    </li>    
-                                      
-                    /*{functionalities.map(functionalitie => (
-                        <li class="collection-item" key={functionalitie.idFunctionalities}>
-                            <strong>Functionalitie Type:</strong>
-                            <p>{functionalitie.functionalities.type}</p> 
-                        </li> 
-                    ))}    */            
+                        <p>{type}</p>   
+                        
+                        <strong>Functionalities:</strong>       
+                        {functionalities.map(({idFunctionalities, type}) => 
+                            <p>{type}</p> 
+                        )}  
+                        <button onClick={() => handleDeleteProfile(idProfile)} type="button">
+                            <FiTrash2 size={20} color="#a8a8b3"/>
+                        </button>                    
+                    </li>  
+                               
                 ))}
-            </ul>                 
+            </ul>          
         </div>
     )
 }

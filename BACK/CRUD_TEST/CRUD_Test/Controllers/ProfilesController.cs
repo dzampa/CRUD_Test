@@ -116,6 +116,12 @@ namespace CRUD_Test.API.Controllers
                 return NotFound();
             }
 
+            var ret = new User_ProfileController(_context).DeleteUser_Profile(id).Result;
+            if (ret == null)
+            {
+                return NotFound();
+            }
+
             _context.Profile.Remove(profile);
             await _context.SaveChangesAsync();
 
