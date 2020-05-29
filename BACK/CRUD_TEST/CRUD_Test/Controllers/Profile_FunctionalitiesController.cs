@@ -28,6 +28,46 @@ namespace CRUD_Test.API.Controllers
             return await _context.Profile_Functionalities.ToListAsync();
         }
 
+        // GET: api/Profile_Functionalities/profilefunc
+        [HttpGet("profilefunc")]
+        public ActionResult<IEnumerable<ProfilesFunc>> GetUserProf()
+        {
+
+            List<ProfilesFunc> profilesFuncs = new List<ProfilesFunc>();
+
+            var profiles = new ProfilesController(_context).GetProfiles().Result;
+
+            if (profiles == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var profilex in profiles.Value) 
+            {
+                var result = from func in _context.Functionalities
+                             join prf in _context.Profile_Functionalities
+                             on func.idFunctionalities equals prf.idFunctionalities into PRF
+                             from prf in PRF.DefaultIfEmpty()
+                             where prf.idProfile == profilex.idProfile
+                             select new
+                             {
+                                 func.idFunctionalities,
+                                 func.Type
+                             };
+
+                ProfilesFunc x = new ProfilesFunc();
+
+                x.idProfile = profilex.idProfile;
+                x.Type = profilex.Type;
+                x.functionalities = result.Select(a => new Functionalities { idFunctionalities = a.idFunctionalities, Type = a.Type }).ToList();
+
+                profilesFuncs.Add(x);
+
+            }             
+
+            return Ok(profilesFuncs);
+        }
+
         // GET: api/Profile_Functionalities/5
         [HttpGet("{idFunctionalities}")]
         public async Task<ActionResult<IEnumerable<Profile_Functionalities>>> GetProfile_Functionalities(int idFunctionalities)

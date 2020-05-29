@@ -39,6 +39,10 @@ export default function Functionalities(){
     
             alert(`ID de funcionalidade:: ${response.data.idFunctionalities}`)
 
+            api.get('Functionalities').then(response => {
+                setFunctionalities(response.data);
+            });
+
         }catch (err){
             alert('Erro no cadastro, tente novemente.' + err);
         }

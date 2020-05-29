@@ -48,14 +48,9 @@ export default function User(){
     
             alert(`ID de usuário:: ${response.data.idUser}`)
 
-           /* var data = ({
-                "idUser": parseInt(response.data.idUser),
-                "name": Name,
-                "cpf": parseInt(CPF),
-                "type": null
-            })
-            
-            setUsers(data);*/
+            api.get('User_Profile/userprofile').then(response => {
+                setUsers(response.data);
+            });
 
         }catch (err){
             alert('Erro no cadastro, tente novemente.' + err);
