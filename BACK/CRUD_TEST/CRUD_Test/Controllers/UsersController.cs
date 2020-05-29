@@ -26,7 +26,7 @@ namespace CRUD_Test.API.Controllers
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.User.ToListAsync();
-        }
+        }        
 
         // GET: api/Users/5
         [HttpGet("{id}")]

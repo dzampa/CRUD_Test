@@ -28,6 +28,33 @@ namespace CRUD_Test.API.Controllers
             return await _context.User_Profile.ToListAsync();
         }
 
+        // GET: api/User_Profile/userprofile
+        [HttpGet("userprofile")]
+        public ActionResult<IEnumerable<UserProfiles>> GetUserProf()
+        {
+            var user = from us in _context.User
+                       join uspr in _context.User_Profile
+                       on us.idUser equals uspr.idUser into USPR
+                       from usp in USPR.DefaultIfEmpty()
+                       join pr in _context.Profile
+                       on usp.idProfile equals pr.idProfile into PROF
+                       from m in PROF.DefaultIfEmpty()
+                       select new
+                       {
+                           us.idUser,
+                           us.Name,
+                           us.CPF,
+                           Type = m.Type
+                       };
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
         // GET: api/User_Profile/5
         [HttpGet("{idProfile}")]
         public async Task<ActionResult<IEnumerable<User_Profile>>> GetUser_Profile(int idProfile)
