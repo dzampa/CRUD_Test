@@ -84,7 +84,7 @@ export default function User(){
                     'CPF': parseInt(CPF)
                 })   
 
-                const response = await api.put(`/Users/${idUser}`,User)
+                await api.put(`/Users/${idUser}`,User)
 
                 const data2 = {   
                     'idUser': parseInt(idUser),         
@@ -122,10 +122,6 @@ export default function User(){
             setCpf(cpf);
             setType(type);
             setidUser(idUser);
-
-            api.get(`Profiles/bytype/${type}`).then(response => {
-                setidProfile(response.data.idProfile);
-            });
             
         }catch (err){
             alert('Erro no cadastro, tente novemente.' + err);

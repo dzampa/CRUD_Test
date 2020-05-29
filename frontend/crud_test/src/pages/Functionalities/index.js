@@ -9,8 +9,8 @@ export default function Functionalities(){
 
     const [functionalities, setFunctionalities] = useState([]);
 
-    const [type, setType] = useState(''); 
     const [idFunctionalities, setidFunctionalities] = useState(0); 
+    const [type, setType] = useState(''); 
     
 
     useEffect(()=>{
@@ -54,10 +54,6 @@ export default function Functionalities(){
                 const response = await api.post('/Functionalities',Functionalitie);
         
                 alert(`ID de funcionalidade:: ${response.data.idFunctionalities}`)
-    
-                api.get('Functionalities').then(response => {
-                    setFunctionalities(response.data);
-                });
             }
             else if(idFunctionalities!==0)
             {
@@ -67,14 +63,15 @@ export default function Functionalities(){
                     'Type': type
                 })  
 
-               await api.put(`/Functionalities/${idFunctionalities}`,Functionalitie);
+               await api.put(`Functionalities/${idFunctionalities}`,Functionalitie);
         
-                alert(`ID de funcionalidade:: ${idFunctionalities}`)
-    
-                api.get('Functionalities').then(response => {
-                    setFunctionalities(response.data);
-                });
+                alert(`ID de funcionalidade:: ${idFunctionalities}`)    
+                
             }
+
+            api.get('Functionalities').then(response => {
+                setFunctionalities(response.data);
+            });
 
             setType('');
             setidFunctionalities(0);  
